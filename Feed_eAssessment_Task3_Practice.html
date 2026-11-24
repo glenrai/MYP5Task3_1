@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYP eAssessment Practice: Task 3 (Feed)</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    color: #333;
+    background: linear-gradient(135deg, #3f7fb5 0%, #4fa6d3 100%);
+    min-height: 100vh;
+    padding: 32px 16px 60px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .intro {
+    color: #fff;
+    margin-bottom: 22px;
+  }
+  .intro h1 { margin: 0 0 6px; font-size: 26px; font-weight: 600; }
+  .intro p { margin: 0; font-size: 16px; opacity: .95; }
+
+  .steps {
+    background: #fff; border-radius: 6px; padding: 18px 26px 20px; margin-bottom: 22px;
+    font-size: 15.5px; line-height: 1.55; box-shadow: 0 4px 14px rgba(0,0,0,.18);
+  }
+  .steps h2 { margin: 0 0 8px; font-size: 18px; color: #2b4f86; }
+  .steps ol { margin: 0 0 10px; padding-left: 22px; }
+  .steps li { margin-bottom: 3px; }
+  .warn { margin: 6px 0 14px; padding: 8px 12px; background: #fff4e5; border-left: 4px solid #e08a00; font-size: 14.5px; }
+  .namebox { font-weight: 700; color: #2b4f86; }
+  .namebox input { margin-left: 8px; padding: 8px 10px; font-size: 15px; width: 300px; max-width: 100%; border: 1px solid #aaa; border-radius: 4px; }
+  .namebox input.missing { border-color: #b3261e; background: #fdecea; }
+  .tools button.pdf { background: #2e7d32; border-color: #2e7d32; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 0; }
+  .tab {
+    border: none; cursor: pointer;
+    padding: 12px 20px; font-size: 15px; font-weight: 600;
+    background: rgba(255,255,255,.35); color: #fff;
+    border-radius: 6px 6px 0 0;
+  }
+  .tab.active { background: #e9e9e9; color: #333; }
+
+  .panel {
+    background: #c9c9c9;
+    border-radius: 0 6px 6px 6px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    display: none;
+  }
+  .panel.active { display: block; }
+  .bar {
+    position: relative;
+    background: linear-gradient(#f1f1f1, #e2e2e2);
+    border-bottom: 1px solid #bbb;
+    padding: 16px 20px 16px 84px;
+    font-size: 19px;
+  }
+  .bar .dot {
+    position: absolute; left: 22px; top: -8px;
+    width: 46px; height: 46px; border-radius: 4px;
+    background: #4a7fc0; box-shadow: 2px 2px 3px rgba(0,0,0,.3);
+  }
+  .bar .dot::after {
+    content: ""; position: absolute; left: 4px; top: 3px;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #fff; border: 2px solid #333;
+  }
+  .bar .x {
+    position: absolute; right: 14px; top: 10px;
+    width: 32px; height: 32px; background: #ccc; border: 1px solid #999;
+    font-weight: 800; text-align: center; line-height: 30px; font-size: 18px;
+  }
+  .sheet {
+    background: #fff;
+    margin: 0 14px 14px;
+    padding: 26px 34px 28px;
+    font-size: 19px;
+    line-height: 1.55;
+  }
+  .sheet ul { margin: 14px 0 22px; padding-left: 40px; }
+  .sheet li { margin-bottom: 4px; }
+  .create { color: #3a6db5; font-weight: 700; }
+  .words { margin-top: 10px; }
+
+  .prep {
+    background: #f6f8fb;
+    border-left: 5px solid #3a6db5;
+    margin: 0 14px 14px;
+    padding: 18px 24px;
+    font-size: 15.5px;
+    line-height: 1.5;
+  }
+  .prep h3 { margin: 0 0 10px; font-size: 17px; color: #2b4f86; }
+  .prep table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  .prep td { vertical-align: top; padding: 6px 8px; border-bottom: 1px solid #dde3ec; }
+  .prep td:first-child { width: 120px; font-weight: 700; color: #2b4f86; }
+  .prep .tip { margin: 10px 0 0; font-size: 14.5px; color: #555; }
+
+  .writer {
+    background: #fff;
+    margin: 0 14px 14px;
+    padding: 18px 24px 20px;
+  }
+  .tools { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; font-size: 15px; }
+  .tools button {
+    border: 1px solid #3a6db5; background: #3a6db5; color: #fff;
+    padding: 7px 14px; border-radius: 4px; cursor: pointer; font-size: 14px;
+  }
+  .tools button.ghost { background: #fff; color: #3a6db5; }
+  .timer { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .timer.low { color: #b3261e; }
+  textarea {
+    width: 100%; min-height: 380px; resize: vertical;
+    font: 16px/1.6 "Helvetica Neue", Arial, sans-serif;
+    padding: 14px; border: 1px solid #bbb; border-radius: 4px;
+  }
+  .count { font-size: 14px; color: #555; margin-top: 6px; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .intro, .steps, .tabs, .writer, .x { display: none; }
+    .panel { display: block !important; box-shadow: none; background: #fff; page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="intro">
+    <h1>MYP eAssessment Practice: Task 3</h1>
+    <p>Anchor text: <em>Feed</em> by M. T. Anderson. Choose <strong>one</strong> scenario and write your response.</p>
+  </div>
+
+  <div class="steps">
+    <h2>Instructions</h2>
+    <ol>
+      <li>Type your <strong>full name</strong> in the box below.</li>
+      <li>Read both scenarios using the tabs. Choose <strong>one</strong>.</li>
+      <li>Read the “Before you write” box. Plan your letter for about 5 minutes, thinking about context, audience, purpose and register.</li>
+      <li>Click <strong>Start timer</strong> and write your letter in the writing box (approximately 350 words, 35 minutes).</li>
+      <li>When you finish, click <strong>Download as PDF</strong>. The file saves to your Downloads folder, named with your name and the scenario.</li>
+      <li>Open the assignment on <strong>Toddle</strong>, click <strong>Add / Upload</strong>, choose the PDF from your Downloads folder, and <strong>Submit</strong>.</li>
+    </ol>
+    <p class="warn">Important: this page does not save your work. Do not close or refresh the tab until you have downloaded your PDF and uploaded it to Toddle.</p>
+    <label class="namebox">Full name: <input type="text" id="student-name" placeholder="First name Last name"></label>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-t="a">Scenario A</button>
+    <button class="tab" data-t="b">Scenario B</button>
+  </div>
+
+  <!-- ================= SCENARIO A ================= -->
+  <section class="panel active" id="a">
+    <div class="bar"><span class="dot"></span><strong>Task 3</strong> (30 marks)<span class="x">✕</span></div>
+    <div class="sheet">
+      Timing recommendation: <strong>35 minutes</strong>
+      <ul>
+        <li>Global context – Scientific and technological innovation</li>
+        <li>This task is assessed according to criteria B (Organizing), C (Producing text) and D (Using language).</li>
+        <li>This task is worth 30 marks (B – 10 marks, C – 10 marks, D – 10 marks).</li>
+      </ul>
+      You live in the world of M. T. Anderson's <em>Feed</em>. Your friend's feed was damaged during a hacker attack, and the corporation that makes the feed has refused to repair it because her shopping profile does not make her a valuable customer. <span class="create">Create</span> a letter to the Chief Executive of FeedTech Corporation persuading the company to repair your friend's feed and explaining why it has a responsibility to do so.
+      <div class="words">(Approximately 350 words)</div>
+    </div>
+
+    <div class="prep">
+      <h3>Before you write: context and register</h3>
+      <table>
+        <tr><td>Context</td><td>You are a teenager inside the novel's world. Use what you know from the text (the hack on the Moon, the malfunction, the company's refusal, how the feed shapes daily life) to make your situation believable.</td></tr>
+        <tr><td>Audience</td><td>A powerful corporate executive who does not know you and has no reason to care.</td></tr>
+        <tr><td>Purpose</td><td>To persuade. Think about what would actually move a corporation: reputation, fairness, public trust, consequences.</td></tr>
+        <tr><td>Register</td><td>Formal and controlled. Polite but firm. Feed slang (“unit”, “meg”, “null”) does not suit this reader; if you use it at all, use it once and on purpose.</td></tr>
+        <tr><td>Conventions</td><td>Address and date, a formal salutation, a clear opening that states why you are writing, paragraphs that build your case, a closing request, and a formal sign-off.</td></tr>
+      </table>
+    </div>
+
+    <div class="writer">
+      <div class="tools">
+        <span>Time remaining: <span class="timer" id="timer-a">35:00</span></span>
+        <span>
+          <button onclick="startTimer('a')">Start timer</button>
+          <button class="ghost" onclick="resetTimer('a')">Reset</button>
+          <button class="pdf" onclick="downloadPDF('a')">Download as PDF</button>
+        </span>
+      </div>
+      <textarea id="text-a" placeholder="Write your letter here..."></textarea>
+      <div class="count"><span id="count-a">0</span> words</div>
+    </div>
+  </section>
+
+  <!-- ================= SCENARIO B ================= -->
+  <section class="panel" id="b">
+    <div class="bar"><span class="dot"></span><strong>Task 3</strong> (30 marks)<span class="x">✕</span></div>
+    <div class="sheet">
+      Timing recommendation: <strong>35 minutes</strong>
+      <ul>
+        <li>Global context – Globalization and sustainability</li>
+        <li>This task is assessed according to criteria B (Organizing), C (Producing text) and D (Using language).</li>
+        <li>This task is worth 30 marks (B – 10 marks, C – 10 marks, D – 10 marks).</li>
+      </ul>
+      You live in the world of M. T. Anderson's <em>Feed</em>, where forests have been cleared to build air factories, the oceans are dying and people are developing lesions on their skin. <span class="create">Create</span> a letter to the President of the United States urging the government to take action to protect the environment and the health of its citizens.
+      <div class="words">(Approximately 350 words)</div>
+    </div>
+
+    <div class="prep">
+      <h3>Before you write: context and register</h3>
+      <table>
+        <tr><td>Context</td><td>You are a citizen inside the novel's world. Draw on details from the text (air factories, lesions, the dead ocean, the government's response) to ground your argument.</td></tr>
+        <tr><td>Audience</td><td>The head of a government that has so far played down the crisis. Your reader holds power and may be defensive.</td></tr>
+        <tr><td>Purpose</td><td>To urge action. Name the problem, show its human cost, and propose what the government should do.</td></tr>
+        <tr><td>Register</td><td>Formal and respectful, with urgency. Avoid insults or sarcasm; a reasoned tone is more persuasive to an authority. Keep feed slang out unless you use it deliberately to show who you are.</td></tr>
+        <tr><td>Conventions</td><td>Address and date, a formal salutation (for example, “Dear Mr President”), a clear statement of purpose, structured paragraphs, a specific call to action, and a formal sign-off.</td></tr>
+      </table>
+    </div>
+
+    <div class="writer">
+      <div class="tools">
+        <span>Time remaining: <span class="timer" id="timer-b">35:00</span></span>
+        <span>
+          <button onclick="startTimer('b')">Start timer</button>
+          <button class="ghost" onclick="resetTimer('b')">Reset</button>
+          <button class="pdf" onclick="downloadPDF('b')">Download as PDF</button>
+        </span>
+      </div>
+      <textarea id="text-b" placeholder="Write your letter here..."></textarea>
+      <div class="count"><span id="count-b">0</span> words</div>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  document.querySelectorAll('.tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (b) { b.classList.remove('active'); });
+      document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.t).classList.add('active');
+    });
+  });
+
+  ['a', 'b'].forEach(function (k) {
+    var ta = document.getElementById('text-' + k);
+    ta.addEventListener('input', function () {
+      var n = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+      document.getElementById('count-' + k).textContent = n;
+    });
+  });
+
+  var timers = {}, remaining = { a: 2100, b: 2100 };
+  function show(k) {
+    var s = remaining[k], el = document.getElementById('timer-' + k);
+    el.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+    el.classList.toggle('low', s <= 300);
+  }
+  function startTimer(k) {
+    if (timers[k]) return;
+    timers[k] = setInterval(function () {
+      if (remaining[k] > 0) { remaining[k]--; show(k); }
+      else { clearInterval(timers[k]); timers[k] = null; }
+    }, 1000);
+  }
+  function resetTimer(k) {
+    clearInterval(timers[k]); timers[k] = null; remaining[k] = 2100; show(k);
+  }
+  function downloadPDF(k) {
+    var nameEl = document.getElementById('student-name');
+    var name = nameEl.value.trim();
+    if (!name) {
+      nameEl.classList.add('missing'); nameEl.focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    nameEl.classList.remove('missing');
+    var text = document.getElementById('text-' + k).value;
+    if (!text.trim()) { document.getElementById('text-' + k).focus(); return; }
+
+    var panel = document.getElementById(k);
+    var context = panel.querySelector('.sheet li').textContent.trim();
+    var sheet = panel.querySelector('.sheet').cloneNode(true);
+    sheet.querySelectorAll('ul, .words').forEach(function (n) { n.remove(); });
+    var prompt = sheet.textContent.replace('Timing recommendation: 35 minutes', '').replace(/\s+/g, ' ').trim();
+    var words = text.trim().split(/\s+/).length;
+    var used = 2100 - remaining[k];
+    var timeUsed = Math.floor(used / 60) + ' min ' + (used % 60) + ' sec';
+    var date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    var label = 'Scenario ' + k.toUpperCase();
+    var fileName = (name.replace(/[^\w\- ]+/g, '').replace(/\s+/g, '_') || 'Student') + '_Feed_Task3_' + label.replace(' ', '_') + '.pdf';
+
+    if (window.jspdf && window.jspdf.jsPDF) {
+      var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+      var L = 20, W = 170, y = 20, lh = 6;
+      function line(str, size, style, color) {
+        doc.setFont('helvetica', style || 'normal'); doc.setFontSize(size || 11);
+        doc.setTextColor(color || 30);
+        doc.splitTextToSize(str, W).forEach(function (ln) {
+          if (y > 277) { doc.addPage(); y = 20; }
+          doc.text(ln, L, y); y += (size || 11) * 0.5;
+        });
+      }
+      line('MYP eAssessment Practice: Task 3 (Feed)', 15, 'bold', 20);
+      y += 2;
+      line('Name: ' + name, 11, 'bold');
+      line('Date: ' + date + '    |    ' + label + '    |    ' + words + ' words    |    Time used: ' + timeUsed, 10, 'normal', 80);
+      line(context, 10, 'normal', 80);
+      y += 3; doc.setDrawColor(180); doc.line(L, y, L + W, y); y += 7;
+      line('Task', 11, 'bold', 40);
+      line(prompt + ' (Approximately 350 words)', 10.5, 'italic', 60);
+      y += 3; doc.line(L, y, L + W, y); y += 7;
+      line('Response', 11, 'bold', 40); y += 1;
+      text.replace(/\r/g, '').split('\n').forEach(function (para) {
+        if (!para.trim()) { y += 3; return; }
+        line(para, 11.5, 'normal', 20);
+      });
+      doc.save(fileName);
+    } else {
+      // Offline fallback: open a print view; choose "Save as PDF" as the printer.
+      var w = window.open('', '_blank');
+      var esc = function (s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+      w.document.write('<html><head><title>' + esc(fileName.replace('.pdf', '')) + '</title><style>body{font-family:Arial,sans-serif;margin:40px;line-height:1.6;color:#222}.m{color:#666;font-size:13px}.p{font-style:italic;color:#555}pre{white-space:pre-wrap;font-family:inherit;font-size:15px}</style></head><body>' +
+        '<h2>MYP eAssessment Practice: Task 3 (Feed)</h2><p><b>Name:</b> ' + esc(name) + '</p><p class="m">' + date + ' | ' + label + ' | ' + words + ' words | Time used: ' + timeUsed + '<br>' + esc(context) + '</p><hr><p class="p">' + esc(prompt) + ' (Approximately 350 words)</p><hr><pre>' + esc(text) + '</pre></body></html>');
+      w.document.close(); w.focus(); w.print();
+    }
+  }
+</script>
+</body>
+</html>
